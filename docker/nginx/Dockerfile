@@ -1,8 +1,8 @@
 FROM alpine:3.9
 ENV NGINX_VERSION 1.15.9
 # ソースからnginxをインストールする
-RUN apk --update add pcre-dev openssl-dev zlib-dev \
-  && apk add --virtual build-dependencies build-base curl \
+RUN apk --update --no-cache add pcre-dev openssl-dev zlib-dev \
+  && apk add --no-cache --virtual build-dependencies build-base curl \
   && addgroup -S nginx \
   && adduser -D -S -h /var/cache/nginx -s /sbin/nologin -G nginx nginx \
   && curl -SLO http://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz \
