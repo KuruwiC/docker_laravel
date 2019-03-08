@@ -1,10 +1,11 @@
 FROM alpine:3.9
-ENV NGINX_VERSION 1.15.9
+ENV NGINX_VERSION=1.15.9 \
+    TZ="Asia/Tokyo"
 # ソースからnginxをインストールする
 RUN apk --update --no-cache add pcre-dev openssl-dev zlib-dev \
   && apk add --no-cache --virtual build-dependencies build-base curl \
-  && addgroup -S nginx \
-  && adduser -D -S -h /var/cache/nginx -s /sbin/nologin -G nginx nginx \
+  && addgroup -S www-data \
+  && adduser -D -S -h /var/cache/www-data -s /sbin/nologin -G www-data www-data \
   && curl -SLO http://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz \
   && tar xzvf nginx-${NGINX_VERSION}.tar.gz \
   && cd nginx-${NGINX_VERSION} \
@@ -16,11 +17,11 @@ RUN apk --update --no-cache add pcre-dev openssl-dev zlib-dev \
       --error-log-path=/var/log/nginx/error.log \
       --http-log-path=/var/log/nginx/access.log \
       --pid-path=/var/run/nginx.pid \
-      --user=nginx \
-      --group=nginx \
+      --user=www-data \
+      --group=www-data \
       --with-http_ssl_module \
       --with-http_gzip_static_module \
-  && make \
+  && make -j "$(nproc)" \
   && make install \
   && : "ログの出力先をstdout, stderrのシンボリックリンクにする" \
   && ln -sf /dev/stdout /var/log/nginx/access.log \
@@ -28,7 +29,7 @@ RUN apk --update --no-cache add pcre-dev openssl-dev zlib-dev \
   && cd / \
   && : "タイムゾーン合わせ" \
   && apk add tzdata \
-  && cp /usr/share/zoneinfo/Asia/Tokyo /etc/localtime \
+  && cp "/usr/share/zoneinfo/$TZ" /etc/localtime \
   && : "不要ファイルの削除" \
   && apk del build-dependencies \
   && apk del tzdata \
