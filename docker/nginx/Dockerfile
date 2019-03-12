@@ -4,8 +4,8 @@ ENV NGINX_VERSION=1.15.9 \
 # ソースからnginxをインストールする
 RUN apk --update --no-cache add pcre-dev openssl-dev zlib-dev \
   && apk add --no-cache --virtual build-dependencies build-base curl \
-  && addgroup -S www-data \
-  && adduser -D -S -h /var/cache/www-data -s /sbin/nologin -G www-data www-data \
+  && addgroup -g 82 -S www-data \
+  && adduser -u 82 -D -S -h /var/cache/www-data -s /sbin/nologin -G www-data www-data \
   && curl -SLO http://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz \
   && tar xzvf nginx-${NGINX_VERSION}.tar.gz \
   && cd nginx-${NGINX_VERSION} \
