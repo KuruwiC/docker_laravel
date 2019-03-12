@@ -1,0 +1,36 @@
+version: '3'
+services:
+  php-fpm:
+    build: ./docker/php-fpm
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_NAME: test_db
+      DB_USER: root
+      DB_PASS: pass
+    depends_on:
+      - mysql
+    volumes:
+      - socket:/var/run/php-fpm
+      - ./src:/var/www:cached
+  nginx:
+    build: ./docker/nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - php-fpm
+    volumes:
+      - socket:/var/run/php-fpm
+      - ./src:/var/www:cached
+  mysql:
+    build: ./docker/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: pass
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./docker/mysql/my.cnf:/etc/mysql/conf.d/my.cnf
+      - ./docker/mysql/data:/var/lib/mysql
+      - ./docker/mysql/init:/docker-entrypoint-initdb.d
+volumes:
+  socket:

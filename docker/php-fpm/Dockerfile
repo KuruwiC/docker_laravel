@@ -71,7 +71,7 @@ RUN apk --update --no-cache add \
        /var/cache/apk/* \
     && : "ユーザ作成" \
     && addgroup -g 82 -S www-data \
-    && adduser -u 82 -D -S -G www-data www-data \
+    && adduser -u 82 -D -S -h /var/cache/www-data -s /sbin/nologin -G www-data www-data \
     && : "ディレクトリ関連" \
     && mkdir -p "$PHP_INI_DIR/conf.d" \
     && mkdir -p "$SESSION_SAVE_PATH" \
