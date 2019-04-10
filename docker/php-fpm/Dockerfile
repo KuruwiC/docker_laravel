@@ -1,7 +1,8 @@
 FROM alpine:3.9
-ENV PHP_VERSION=7.3.2 \
-    PHP_INI_DIR="/etc/php7" \
-    SESSION_SAVE_PATH="/var/lib/php7/session" \
+ARG php_version=7.3.2
+ENV PREFIX="/usr/local" \
+    PHP_INI_DIR="/usr/local/etc/php" \
+    SESSION_SAVE_PATH="/var/lib/php/session" \
     TZ="Asia/Tokyo"
 # ソースからphpをインストールする
 RUN apk --update --no-cache add \
@@ -23,7 +24,7 @@ RUN apk --update --no-cache add \
     dpkg-dev dpkg \
     file \
     libc-dev \
-    make \
+  make \
     pkgconf \
     re2c \
     coreutils \
@@ -31,11 +32,11 @@ RUN apk --update --no-cache add \
     libsodium-dev \
     openssl-dev \
     sqlite-dev \
-  && curl -SLo php.tar.xz http://jp2.php.net/get/php-${PHP_VERSION}.tar.xz/from/this/mirror \
+  && curl -SLo php.tar.xz http://jp2.php.net/get/php-${php_version}.tar.xz/from/this/mirror \
   && tar -Jxvf php.tar.xz \
-  && cd php-${PHP_VERSION} \
+  && cd php-${php_version} \
   && ./configure \
-      --prefix="$PHP_INI_DIR" \
+      --prefix="$PREFIX" \
       --with-config-file-path="$PHP_INI_DIR" \
       --with-config-file-scan-dir="$PHP_INI_DIR/conf.d" \
       --enable-option-checking=fatal \
@@ -66,7 +67,7 @@ RUN apk --update --no-cache add \
     && apk del build-dependencies \
     && apk del tzdata \
     && rm -rf \
-       php-${PHP_VERSION} \
+       php-${php_version} \
        php.tar.xz \
        /var/cache/apk/* \
     && : "ユーザ作成" \
@@ -79,12 +80,9 @@ RUN apk --update --no-cache add \
     && chmod 777 "$SESSION_SAVE_PATH" \
     && mkdir -p /var/www/html \
 	  && chown www-data:www-data /var/www/html \
-    && chmod 777 /var/www/html \
-    && ln -s "$PHP_INI_DIR/bin/php" /usr/local/bin/php \
-    && mkdir -p /usr/local/sbin \
-    && ln -s $PHP_INI_DIR/sbin/php-fpm /usr/local/sbin/php-fpm
-COPY ./php-fpm.conf $PHP_INI_DIR/etc/php-fpm.conf
-COPY ./www.conf $PHP_INI_DIR/etc/php-fpm.d/www.conf
+    && chmod 777 /var/www/html
+COPY ./php-fpm.conf $PREFIX/etc/php-fpm.conf
+COPY ./www.conf $PREFIX/etc/php-fpm.d/www.conf
 COPY ./php.ini $PHP_INI_DIR/php.ini
 WORKDIR /var/www
 VOLUME ["/var/www"]
