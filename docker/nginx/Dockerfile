@@ -1,14 +1,14 @@
 FROM alpine:3.9
-ENV NGINX_VERSION=1.15.9 \
-    TZ="Asia/Tokyo"
+ARG nginx_version=1.15.9
+ENV TZ="Asia/Tokyo"
 # ソースからnginxをインストールする
 RUN apk --update --no-cache add pcre-dev openssl-dev zlib-dev \
   && apk add --no-cache --virtual build-dependencies build-base curl \
   && addgroup -g 82 -S www-data \
   && adduser -u 82 -D -S -h /var/cache/www-data -s /sbin/nologin -G www-data www-data \
-  && curl -SLO http://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz \
-  && tar xzvf nginx-${NGINX_VERSION}.tar.gz \
-  && cd nginx-${NGINX_VERSION} \
+  && curl -SLO http://nginx.org/download/nginx-${nginx_version}.tar.gz \
+  && tar xzvf nginx-${nginx_version}.tar.gz \
+  && cd nginx-${nginx_version} \
   && ./configure \
       --prefix=/etc/nginx \
       --sbin-path=/usr/sbin/nginx \
@@ -34,8 +34,8 @@ RUN apk --update --no-cache add pcre-dev openssl-dev zlib-dev \
   && apk del build-dependencies \
   && apk del tzdata \
   && rm -rf \
-     nginx-${NGINX_VERSION} \
-     nginx-${NGINX_VERSION}.tar.gz \
+     nginx-${nginx_version} \
+     nginx-${nginx_version}.tar.gz \
      /var/cache/apk/*
 COPY ./nginx.conf /etc/nginx/nginx.conf
 COPY ./default.conf /etc/nginx/conf.d/default.conf
