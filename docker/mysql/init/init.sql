@@ -9,4 +9,4 @@ CREATE TABLE `users` (
   KEY `id` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-INSERT INTO `user` (`id`, `name`) VALUES (1, 'テストユーザー'), (2, 'test user');
+INSERT INTO `users` (`id`, `name`) VALUES (1, 'テストユーザー'), (2, 'test user');
