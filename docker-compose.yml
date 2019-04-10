@@ -32,5 +32,9 @@ services:
       - ./docker/mysql/my.cnf:/etc/mysql/conf.d/my.cnf
       - ./docker/mysql/data:/var/lib/mysql
       - ./docker/mysql/init:/docker-entrypoint-initdb.d
+  redis:
+    build: ./docker/redis
+    ports:
+      - "6379:6379"
 volumes:
   socket:
