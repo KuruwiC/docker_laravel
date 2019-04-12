@@ -80,7 +80,10 @@ RUN apk --update --no-cache add \
     && chmod 777 "$SESSION_SAVE_PATH" \
     && mkdir -p /var/www/html \
 	  && chown www-data:www-data /var/www/html \
-    && chmod 777 /var/www/html
+    && chmod 777 /var/www/html \
+    && : "composer 1.8.5をインストール" \
+    && curl -sS https://raw.githubusercontent.com/composer/getcomposer.org/5eb0614d3fa7130b363698d3dca52c619b463615/web/installer | php \
+    && mv composer.phar /usr/local/bin/composer
 COPY ./php-fpm.conf $PREFIX/etc/php-fpm.conf
 COPY ./www.conf $PREFIX/etc/php-fpm.d/www.conf
 COPY ./php.ini $PHP_INI_DIR/php.ini
