@@ -2,7 +2,7 @@ FROM alpine:3.9
 ARG nginx_version=1.15.9
 ENV TZ="Asia/Tokyo"
 # ソースからnginxをインストールする
-RUN apk --update --no-cache add pcre-dev openssl-dev zlib-dev \
+RUN apk --update --no-cache add pcre-dev openssl-dev zlib-dev gettext \
   && apk add --no-cache --virtual build-dependencies build-base curl \
   && addgroup -g 82 -S www-data \
   && adduser -u 82 -D -S -h /var/cache/www-data -s /sbin/nologin -G www-data www-data \
