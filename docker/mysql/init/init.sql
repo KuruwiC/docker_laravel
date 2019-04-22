@@ -1,3 +1,4 @@
+CREATE DATABASE sample_app_dev;
 CREATE DATABASE test_db;
 use test_db;
 
