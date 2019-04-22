@@ -5,6 +5,7 @@ server {
 	location / {
 		root	${DOCUMENT_ROOT};
 		index index.html index.php /404.html;
+    try_files $uri $uri/ /index.php$is_args$args;
 	}
 
 	location ~ \.php$ {
@@ -13,6 +14,7 @@ server {
 		fastcgi_index index.php;
 		fastcgi_param SCRIPT_FILENAME $document_root/$fastcgi_script_name;
 		include fastcgi_params;
+    try_files $uri $uri/ /index.php$is_args$args;
 	}
 
   error_page 500 502 503 504 /50x.html;

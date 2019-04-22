@@ -5,7 +5,7 @@ services:
     environment:
       DB_HOST: mysql
       DB_PORT: 3306
-      DB_NAME: test_db
+      DB_NAME: sample_app_dev
       DB_USER: root
       DB_PASS: pass
     depends_on:
