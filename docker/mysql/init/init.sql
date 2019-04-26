@@ -2,8 +2,7 @@ CREATE DATABASE sample_app_dev;
 CREATE DATABASE test_db;
 use test_db;
 
-DROP TABLE IF EXISTS `test_table`;
-
+DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) DEFAULT NULL,
