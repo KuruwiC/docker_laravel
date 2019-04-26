@@ -1,11 +1,11 @@
 FROM alpine:3.9
 ARG nginx_version=1.15.9
-ENV TZ="Asia/Tokyo"
+ARG time_zone="Asia/Tokyo"
 # ソースからnginxをインストールする
 RUN apk --update --no-cache add pcre-dev openssl-dev zlib-dev gettext \
   && apk add --no-cache --virtual build-dependencies build-base curl \
-  && addgroup -g 82 -S www-data \
-  && adduser -u 82 -D -S -h /var/cache/www-data -s /sbin/nologin -G www-data www-data \
+  && addgroup -g 1000 -S www-data \
+  && adduser -u 1000 -D -S -h /var/cache/www-data -s /sbin/nologin -G www-data www-data \
   && curl -SLO http://nginx.org/download/nginx-${nginx_version}.tar.gz \
   && tar xzvf nginx-${nginx_version}.tar.gz \
   && cd nginx-${nginx_version} \
@@ -29,7 +29,7 @@ RUN apk --update --no-cache add pcre-dev openssl-dev zlib-dev gettext \
   && cd / \
   && : "タイムゾーン合わせ" \
   && apk add tzdata \
-  && cp "/usr/share/zoneinfo/$TZ" /etc/localtime \
+  && cp "/usr/share/zoneinfo/${time_zone}" /etc/localtime \
   && : "不要ファイルの削除" \
   && apk del build-dependencies \
   && apk del tzdata \

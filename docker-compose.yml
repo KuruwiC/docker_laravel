@@ -13,6 +13,8 @@ services:
     volumes:
       - socket:/var/run/php-fpm
       - ./src:/var/www:cached
+      - ./docker/php-fpm/php.ini:/usr/local/etc/php/php.ini
+      - ./docker/php-fpm/www.conf:/usr/local/etc/php-fpm.d/www.conf
   nginx:
     build: ./docker/nginx
     ports:
@@ -22,18 +24,7 @@ services:
     volumes:
       - socket:/var/run/php-fpm
       - ./src:/var/www:cached
-      - ./docker/nginx/default.conf.template:/etc/nginx/conf.d/default.conf.template
-    environment:
-      DOCUMENT_ROOT: /var/www/sample_app/public
-      FASTCGI_PASS: unix:/var/run/php-fpm/php-fpm.sock
-    command:
-      /bin/sh -c
-      "envsubst '
-      $$DOCUMENT_ROOT
-      $$FASTCGI_PASS
-      '< /etc/nginx/conf.d/default.conf.template
-      > /etc/nginx/conf.d/default.conf
-      && nginx -g 'daemon off;'"
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
   mysql:
     build: ./docker/mysql
     environment:

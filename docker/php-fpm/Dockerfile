@@ -1,9 +1,9 @@
 FROM alpine:3.9
 ARG php_version=7.3.2
+ARG time_zone="Asia/Tokyo"
 ENV PREFIX="/usr/local" \
     PHP_INI_DIR="/usr/local/etc/php" \
-    SESSION_SAVE_PATH="/var/lib/php/session" \
-    TZ="Asia/Tokyo"
+    SESSION_SAVE_PATH="/var/lib/php/session"
 # ソースからphpをインストールする
 RUN apk --update --no-cache add \
     ca-certificates \
@@ -14,7 +14,7 @@ RUN apk --update --no-cache add \
     gcc \
     g++ \
     libedit-dev \
-    libzip-dev\
+    libzip-dev \
     libpng-dev \
     libxml2-dev \
     icu-dev \
@@ -24,7 +24,7 @@ RUN apk --update --no-cache add \
     dpkg-dev dpkg \
     file \
     libc-dev \
-  make \
+    make \
     pkgconf \
     re2c \
     coreutils \
@@ -62,7 +62,7 @@ RUN apk --update --no-cache add \
     && cd / \
     && : "タイムゾーン合わせ" \
     && apk add tzdata \
-    && cp "/usr/share/zoneinfo/$TZ" /etc/localtime \
+    && cp "/usr/share/zoneinfo/${time_zone}" /etc/localtime \
     && : "不要ファイルの削除" \
     && apk del build-dependencies \
     && apk del tzdata \
@@ -71,9 +71,10 @@ RUN apk --update --no-cache add \
        php.tar.xz \
        /var/cache/apk/* \
     && : "ユーザ作成" \
-    && addgroup -g 82 -S www-data \
-    && adduser -u 82 -D -S -h /var/cache/www-data -s /sbin/nologin -G www-data www-data \
+    && addgroup -g 1000 -S www-data \
+    && adduser -u 1000 -D -S -h /var/cache/www-data -s /sbin/nologin -G www-data www-data \
     && : "ディレクトリ関連" \
+    && cp $PREFIX/etc/php-fpm.conf.default $PREFIX/etc/php-fpm.conf \
     && mkdir -p "$PHP_INI_DIR/conf.d" \
     && mkdir -p "$SESSION_SAVE_PATH" \
     && chown www-data:www-data "$SESSION_SAVE_PATH" \
@@ -84,9 +85,7 @@ RUN apk --update --no-cache add \
     && : "composer 1.8.5をインストール" \
     && curl -sS https://raw.githubusercontent.com/composer/getcomposer.org/5eb0614d3fa7130b363698d3dca52c619b463615/web/installer | php \
     && mv composer.phar /usr/local/bin/composer
-COPY ./php-fpm.conf $PREFIX/etc/php-fpm.conf
 COPY ./www.conf $PREFIX/etc/php-fpm.d/www.conf
 COPY ./php.ini $PHP_INI_DIR/php.ini
 WORKDIR /var/www
-VOLUME ["/var/www"]
 CMD ["php-fpm", "-F"]
