@@ -1,10 +1,10 @@
 FROM alpine:3.9
 ARG php_version=7.3.2
+ARG node_version=10.15.3
 ARG time_zone="Asia/Tokyo"
 ENV PREFIX="/usr/local" \
     PHP_INI_DIR="/usr/local/etc/php" \
     SESSION_SAVE_PATH="/var/lib/php/session"
-# ソースからphpをインストールする
 RUN apk --update --no-cache add \
     ca-certificates \
     curl \
@@ -32,6 +32,9 @@ RUN apk --update --no-cache add \
     libsodium-dev \
     openssl-dev \
     sqlite-dev \
+    linux-headers \
+    python \
+  && : "PHP-FPMインストール" \
   && curl -SLo php.tar.xz http://jp2.php.net/get/php-${php_version}.tar.xz/from/this/mirror \
   && tar -Jxvf php.tar.xz \
   && cd php-${php_version} \
@@ -60,6 +63,15 @@ RUN apk --update --no-cache add \
     && make -j "$(nproc)"\
     && make install \
     && cd / \
+    && : "node.jsインストール" \
+    && curl -SLo node.tar.gz https://nodejs.org/dist/v10.15.3/node-v${node_version}.tar.gz \
+    && tar -zxvf node.tar.gz \
+    && cd node-v${node_version} \
+    && ./configure \
+        --prefix="$PREFIX" \
+    && make -j "$(nproc)" \
+    && make install \
+    && cd / \
     && : "タイムゾーン合わせ" \
     && apk add tzdata \
     && cp "/usr/share/zoneinfo/${time_zone}" /etc/localtime \
@@ -69,6 +81,8 @@ RUN apk --update --no-cache add \
     && rm -rf \
        php-${php_version} \
        php.tar.xz \
+       node-v${node_version} \
+       node.tar.gz \
        /var/cache/apk/* \
     && : "ユーザ作成" \
     && addgroup -g 1000 -S www-data \
