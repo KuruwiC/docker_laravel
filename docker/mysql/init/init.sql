@@ -1,4 +1,5 @@
 CREATE DATABASE sample_app_dev;
+GRANT ALL PRIVILEGES ON sample_app_dev.* TO app;
 CREATE DATABASE test_db;
 use test_db;
 

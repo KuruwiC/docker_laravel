@@ -19,6 +19,9 @@ RUN apk --update --no-cache add \
     libxml2-dev \
     icu-dev \
     argon2-dev \
+    libjpeg-turbo-dev \
+    freetype-dev \
+    libpng-dev \
   && apk --no-cache add --virtual build-dependencies \
     autoconf \
     dpkg-dev dpkg \
@@ -49,6 +52,9 @@ RUN apk --update --no-cache add \
       --with-zlib \
       --enable-exif \
       --with-gd \
+      --with-freetype-dir="/usr/include" \
+      --with-png-dir="/usr/include" \
+      --with-jpeg-dir="/usr/include" \
       --with-libedit \
       --enable-mbstring \
       --enable-pcntl \
@@ -97,8 +103,7 @@ RUN apk --update --no-cache add \
 	  && chown www-data:www-data /var/www/html \
     && chmod 777 /var/www/html \
     && : "composer 1.8.5をインストール" \
-    && curl -sS https://raw.githubusercontent.com/composer/getcomposer.org/5eb0614d3fa7130b363698d3dca52c619b463615/web/installer | php \
-    && mv composer.phar /usr/local/bin/composer
+    && curl -sS https://raw.githubusercontent.com/composer/getcomposer.org/5eb0614d3fa7130b363698d3dca52c619b463615/web/installer | php -- --install-dir=/usr/local/bin --filename=composer \
 COPY ./www.conf $PREFIX/etc/php-fpm.d/www.conf
 COPY ./php.ini $PHP_INI_DIR/php.ini
 WORKDIR /var/www
