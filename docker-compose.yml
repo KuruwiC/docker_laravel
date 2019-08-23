@@ -41,12 +41,5 @@ services:
     build: ./docker/redis
     ports:
       - "6379:6379"
-  sftp:
-    image: atmoz/sftp:alpine
-    volumes:
-      - ./docker_volumes/sftp/upload:/home/laravel/upload:delegated
-    ports:
-      - "22:22"
-    command: laravel:pass:1001
 volumes:
   socket:
